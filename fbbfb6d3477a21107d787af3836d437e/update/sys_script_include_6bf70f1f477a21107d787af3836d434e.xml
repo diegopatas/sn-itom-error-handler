@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_965320_itom_err.IPRangeUtils</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>IPRangeUtils</name>
+        <script><![CDATA[var IPRangeUtils = Class.create();
+IPRangeUtils.prototype = {
+
+    getHighestIP: function (base_ip, net_nask) {
+
+        if (!base_ip || !net_nask)
+            return null;
+
+        var octet_ip = base_ip.split('.');
+
+        var bin_mask = '';
+        for (var i = 0; i < 32; i++) {
+            bin_mask += (i < net_nask) ? '1' : '0';
+        }
+
+        var subnet_mask = [];
+        for (i = 0; i < 4; i++) {
+            var octet_mask = parseInt(bin_mask.substr(i * 8, 8), 2);
+            if (i < octet_ip.length) {
+                subnet_mask.push(octet_ip[i] | octet_mask).toString();
+            } else {
+                subnet_mask.push(octet_mask);
+            }
+        }
+
+        var reverse_mask = [];
+        for (i = 0; i < subnet_mask.length; i++) {
+            reverse_mask.push(255 - subnet_mask[i]);
+        }
+
+        var highest_ip = [];
+        for (i = 0; i < octet_ip.length; i++) {
+            octet_mask = (octet_ip[i] | reverse_mask[i]).toString();
+            highest_ip.push(octet_mask);
+        }
+
+        highest_ip[3]--;
+        return highest_ip.join('.');
+    },
+
+    isWithinRange: function (ip, lower, upper) {
+
+        if (!ip || !lower || !upper)
+            return false;
+
+        var ips = [ip.split('.'), lower.split('.'), upper.split('.')];
+
+        for (var i = 0; i < ips.length; i++) {
+            for (var j = 0; j < ips[i].length; j++) {
+                ips[i][j] = parseInt(ips[i][j]);
+            }
+            ips[i] = ((ips[i][0] << 24) + (ips[i][1] << 16) + (ips[i][2] << 8) + ips[i][3]);
+        }
+
+        if (ips[0] >= ips[1] && ips[0] <= ips[2])
+            return true;
+        else
+            return false;
+    },
+
+    buildArrToQuery: function (ip) {
+
+        if (!ip)
+            return null;
+
+        var src_ip = ip.split('.');
+        var ip_arr = [];
+
+        src_ip.pop();
+        ip_arr.push(src_ip.join('.'));
+
+        src_ip.pop();
+        ip_arr.push(src_ip.join('.'));
+
+        src_ip.pop();
+        ip_arr.push(src_ip.join('.'));
+
+        return ip_arr;
+    },
+
+    findIPExact: function (ip) {
+
+        var item = {};
+
+        var radix = new GlideRecord('discovery_range_item');
+        radix.query();
+
+        var result = radix.find("name", ip);
+
+        if (result) {
+            item.range = radix.getValue('name');
+            item.highest_ip = item.range;
+            item.status = radix.getDisplayValue("active");
+            item.disc_range = radix.getDisplayValue("parent");
+            return item;
+        }
+        return null;
+    },
+
+    findIPRange: function (ip_candidate, ip_reference) {
+
+        if (!ip_candidate || !ip_reference)
+            return null;
+
+        var item = {};
+
+        var radix = new GlideRecord('discovery_range_item');
+        radix.addEncodedQuery('nameSTARTSWITH' + ip_reference);
+        radix.orderByDesc('netmask');
+        radix.orderBy('network_ip');
+        radix.orderByDesc('start_ip_address');
+        radix.query();
+
+        while (radix.next()) {
+
+            var start;
+            var end;
+            var netmask = parseInt(radix.getValue("netmask"));
+
+            if (!netmask) {
+                start = radix.getValue('start_ip_address');
+                end = radix.getValue('end_ip_address');
+                if (!start || !end)
+                    break;
+            } else {
+                start = radix.getValue("network_ip");
+                end = this.getHighestIP(start, netmask);
+            }
+
+            if (this.isWithinRange(ip_candidate, start, end)) {
+                item.range = radix.getValue("name");
+                item.highest_ip = end;
+                item.status = radix.getDisplayValue("active");
+                item.disc_range = radix.getDisplayValue("parent");
+                return item;
+            }
+        }
+        return null;
+    },
+
+    type: 'IPRangeUtils'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-05-19 21:52:05</sys_created_on>
+        <sys_id>6bf70f1f477a21107d787af3836d434e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>IPRangeUtils</sys_name>
+        <sys_package display_value="ITOM Error Handler" source="x_965320_itom_err">fbbfb6d3477a21107d787af3836d437e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ITOM Error Handler">fbbfb6d3477a21107d787af3836d437e</sys_scope>
+        <sys_update_name>sys_script_include_6bf70f1f477a21107d787af3836d434e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2023-05-19 21:52:05</sys_updated_on>
+    </sys_script_include>
+</record_update>
