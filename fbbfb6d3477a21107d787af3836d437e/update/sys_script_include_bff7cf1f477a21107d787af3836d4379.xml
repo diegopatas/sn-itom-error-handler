@@ -10,26 +10,27 @@
         <script><![CDATA[var ITOMTaskUtils = Class.create();
 ITOMTaskUtils.prototype = {
 
-    createNewTask: function (current, msg_short, msg_desc, priority) {
+    createNewTask: function (current, shortMsg, descMsg, priorityNum) {
 
-        var target_table = "sa_error_handler_task";
+        var targetTable = "sa_error_handler_task";
+        var targetGroup = "f53d408c1b43c418261c63923b4bcbc5"; //
 
-        var new_task = new GlideRecord(target_table);
-        new_task.addEncodedQuery('priority=' + priority + '^stateIN-5,1,2^cmdb_ci=' + current.sys_id);
-        new_task.query();
+        var newTask = new GlideRecord(targetTable);
+        newTask.addEncodedQuery('priority=' + priorityNum + '^stateIN-5,1,2^cmdb_ci=' + current.sys_id);
+        newTask.query();
 
-        if (!new_task.next()) {
+        if (!newTask.next()) {
 
-            new_task.initialize();
-            new_task.setValue("short_description", msg_short);
-            new_task.setValue("description", msg_desc);
-            new_task.setValue("assignment_group", "f53d408c1b43c418261c63923b4bcbc5");
-            new_task.setValue("priority", priority);
-            new_task.setValue("cmdb_ci", current.sys_id);
-            var inserted = new_task.insert();
-            if (!inserted) {
-                var err = "Falha ao criar registro em " + target_table + ". Erro: " + new_task.getErrorMsg();
-                gs.log(err, "BR retroalimentação CMDB");
+            newTask.initialize();
+            newTask.setValue("short_description", shortMsg);
+            newTask.setValue("description", descMsg);
+            newTask.setValue("assignment_group", targetGroup);
+            newTask.setValue("priority", priorityNum);
+            newTask.setValue("cmdb_ci", current.sys_id);
+            var wasInserted = newTask.insert();
+            if (!wasInserted) {
+                var errMsg = "Falha ao criar registro em " + targetTable + ". Erro: " + newTask.getErrorMsg();
+                gs.log(errMsg, "BR retroalimentação CMDB");
             }
         }
     },
@@ -40,13 +41,13 @@ ITOMTaskUtils.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2023-05-19 21:52:06</sys_created_on>
         <sys_id>bff7cf1f477a21107d787af3836d4379</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>2</sys_mod_count>
         <sys_name>ITOMTaskUtils</sys_name>
         <sys_package display_value="ITOM Error Handler" source="x_965320_itom_err">fbbfb6d3477a21107d787af3836d437e</sys_package>
         <sys_policy/>
         <sys_scope display_value="ITOM Error Handler">fbbfb6d3477a21107d787af3836d437e</sys_scope>
         <sys_update_name>sys_script_include_bff7cf1f477a21107d787af3836d4379</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2023-05-19 21:52:06</sys_updated_on>
+        <sys_updated_on>2023-05-19 23:22:31</sys_updated_on>
     </sys_script_include>
 </record_update>
