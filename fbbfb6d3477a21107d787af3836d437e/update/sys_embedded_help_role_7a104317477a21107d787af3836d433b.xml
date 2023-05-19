@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_embedded_help_role">
+    <sys_embedded_help_role action="INSERT_OR_UPDATE">
+        <order>1000</order>
+        <role display_value="x_965320_itom_err.analyst" name="x_965320_itom_err.analyst">6a104317477a21107d787af3836d4338</role>
+        <sys_class_name>sys_embedded_help_role</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2023-05-19 21:17:38</sys_created_on>
+        <sys_id>7a104317477a21107d787af3836d433b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>6a104317477a21107d787af3836d4338</sys_name>
+        <sys_package display_value="ITOM Error Handler" source="x_965320_itom_err">fbbfb6d3477a21107d787af3836d437e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ITOM Error Handler">fbbfb6d3477a21107d787af3836d437e</sys_scope>
+        <sys_update_name>sys_embedded_help_role_7a104317477a21107d787af3836d433b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2023-05-19 21:17:38</sys_updated_on>
+    </sys_embedded_help_role>
+</record_update>
